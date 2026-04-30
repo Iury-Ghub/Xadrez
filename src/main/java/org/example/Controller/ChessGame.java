@@ -83,13 +83,18 @@ public class ChessGame {
         int line = 8-(Integer.parseInt(position.substring(1,2)));
         int colum = position.charAt(0)-'a';
         
-        //Pawns
+        //Pawns Move
         if(board[line][colum] == null){
-            if(board[line+1][colum].toString().equals("P")){
-                board[line][colum] = board[line+1][colum];
-                board[line+1][colum] = null;
+            if(board[line+1][colum] != null && board[line+1][colum].toString().equals("P")) {
+                board[line][colum] = board[line + 1][colum];
+                board[line + 1][colum] = null;
+            }else if (board[6][colum] != null && board[6][colum].toString().equals("P") && board[5][colum] == null) {
+                board[line][colum] = board[6][colum];
+                board[6][colum] = null;
             }
         }
+        //Pawns Captur In Passant
+
     }
     public void resetGame(){}
 }
