@@ -88,7 +88,7 @@ public class ChessGame {
             if(board[line+1][colum] != null && board[line+1][colum].toString().equals("P")) {
                 board[line][colum] = board[line + 1][colum];
                 board[line + 1][colum] = null;
-            }else if (board[6][colum] != null && board[6][colum].toString().equals("P") && board[5][colum] == null) {
+            }else if (line == 4 && board[6][colum] != null && board[6][colum].toString().equals("P") && board[5][colum] == null) {
                 board[line][colum] = board[6][colum];
                 board[6][colum] = null;
             }
