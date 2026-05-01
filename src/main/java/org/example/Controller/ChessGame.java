@@ -63,7 +63,7 @@ public class ChessGame {
         for (Piece[] pieces : board) {
             for (Piece piece : pieces) {
                 if(cont == 0){
-                    System.out.print(line--+" ");
+                    System.out.print(line--+"|");
                 }
                 cont ++;
                 if (piece == null) {
@@ -75,6 +75,7 @@ public class ChessGame {
             System.out.println();
             cont = 0;
         }
+        System.out.println("   _  _  _  _  _  _  _  _");
         System.out.println("#  a  b  c  d  e  f  g  h");
         System.out.println();
     }
