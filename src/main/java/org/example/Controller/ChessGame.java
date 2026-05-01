@@ -107,6 +107,33 @@ public class ChessGame {
             }
         }
     }
+    public void pawnsMoveBlack(String position){
+        int line = (Integer.parseInt(position.substring(1,2)));
+        int colum = position.charAt(0)-'a';
+
+        if(board[line][colum].getColor() == ColorPiece.BLACK) {
+            ///Pawns Move
+            if (board[line][colum] == null) {
+                if (board[line - 1][colum] != null && board[line - 1][colum].toString().equals("P") && board[line-1][colum].getColor() == ColorPiece.BLACK) {
+                    board[line][colum] = board[line + 1][colum];
+                    board[line - 1][colum] = null;
+                } else if (line == 3 && board[1][colum] != null && board[1][colum].toString().equals("P") && board[2][colum] == null && board[1][colum].getColor() == ColorPiece.BLACK) {
+                    board[line][colum] = board[1][colum];
+                    board[1][colum] = null;
+                }
+            }
+            //Pawns Capture In Passant
+            if (board[line][colum] != null && board[line][colum].getColor() == ColorPiece.WHITE) {
+                if (board[line - 1][colum - 1].toString().equals("P")) {
+                    board[line][colum] = board[line - 1][colum - 1];
+                    board[line - 1][colum - 1] = null;
+                } else if (board[line - 1][colum + 1].toString().equals("P")) {
+                    board[line][colum] = board[line - 1][colum + 1];
+                    board[line - 1][colum + 1] = null;
+                }
+            }
+        }
+    }
 
     public void resetGame(){}
 }
