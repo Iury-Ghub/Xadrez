@@ -93,8 +93,16 @@ public class ChessGame {
                 board[6][colum] = null;
             }
         }
-        //Pawns Captur In Passant
-
+        //Pawns Capture In Passant
+        if(board[line][colum] != null && board[line][colum].getColor() == ColorPiece.BLACK){
+            if(board[line+1][colum+1].toString().equals("P")){
+                board[line][colum] = board[line+1][colum+1];
+                board[line+1][colum+1] = null;
+            } else if(board[line+1][colum-1].toString().equals("P")){
+                board[line][colum] = board[line+1][colum-1];
+                board[line+1][colum-1] = null;
+            }
+        }
     }
     public void resetGame(){}
 }
