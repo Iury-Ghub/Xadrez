@@ -79,7 +79,7 @@ public class ChessGame {
         System.out.println();
     }
 
-    public void MoveWhite(String position){
+    public void pawnsMoveWhite(String position){
         int line = 8-(Integer.parseInt(position.substring(1,2)));
         int colum = position.charAt(0)-'a';
         
@@ -104,5 +104,6 @@ public class ChessGame {
             }
         }
     }
+
     public void resetGame(){}
 }
