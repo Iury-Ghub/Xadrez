@@ -6,10 +6,11 @@ import org.example.Enums.NamePiece;
 public class Piece {
     NamePiece name;
     ColorPiece color;
-    SquarePiece square;
+    Square square;
 
-    public Piece(NamePiece name, ColorPiece color) {
+    public Piece(NamePiece name, Square square,ColorPiece color) {
         this.name = name;
+        this.square = square;
         this.color = color;
     }
 
@@ -19,6 +20,10 @@ public class Piece {
 
     public ColorPiece getColor() {
         return color;
+    }
+
+    public Square getSquare(){
+        return square;
     }
 
     @Override
