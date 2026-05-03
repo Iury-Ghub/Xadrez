@@ -107,28 +107,28 @@ public class ChessGame {
             board[x1][y1] = null;
         }
     }
-    public void pawnsMoveBlack(String position){
-        int line = 8-(Integer.parseInt(position.substring(1,2)));
-        int colum = position.charAt(0)-'a';
-        //Pawns Move
-        if (board[line][colum] == null) {
-            if (board[line - 1][colum] != null && board[line - 1][colum].toString().equals("P") && board[line-1][colum].getColor() == ColorPiece.BLACK) {
-                board[line][colum] = board[line + 1][colum];
-                board[line - 1][colum] = null;
-            } else if (line == 3 && board[1][colum] != null && board[1][colum].toString().equals("P") && board[2][colum] == null && board[1][colum].getColor() == ColorPiece.BLACK) {
-                board[line][colum] = board[1][colum];
-                board[1][colum] = null;
-            }
+    public void pawnsMoveBlack(Square positionPiece, Square positionMove){
+        int x1 = 8-positionPiece.getLine(), x2 = 8 -positionMove.getLine();
+        int y1 = positionPiece.getColum(), y2 = positionMove.getColum();
+
+        if(!(board[x1][x2] != null && board[x1][x2].getName() == NamePiece.P)){
+            return;
         }
-        //Pawns Capture In Passant
-        if (board[line][colum] != null && board[line][colum].getColor() == ColorPiece.WHITE) {
-            if (board[line - 1][colum - 1].toString().equals("P") && board[line -1][colum -1].getColor() == ColorPiece.BLACK) {
-                board[line][colum] = board[line - 1][colum - 1];
-                board[line - 1][colum - 1] = null;
-            } else if (board[line - 1][colum + 1].toString().equals("P") && board[line -1][colum -1].getColor() == ColorPiece.BLACK) {
-                board[line][colum] = board[line - 1][colum + 1];
-                board[line - 1][colum + 1] = null;
+
+        if(board[x2][y2] == null && y1 == y2){
+            if(x1 == x2-1){
+                board[x2][y2] = board[x1][y1];
+                board[x1][y1] = null;
+            } else if (x1 == 1 && x1 == x2-2) {
+                board[x2][y2] = board[x1][y1];
+                board[x1][y1] = null;
             }
+        } else if (board[x2][y2] != null
+                && board[x2][y2].getColor() == ColorPiece.WHITE
+                && (x2 == x1+1 && y2 == x1+1 || y2 == x1 - 1)){
+            Piece piece = board[x2][y2];
+            board[x2][y2] = board[x1][y1];
+            board[x1][y1] = null;
         }
     }
 
