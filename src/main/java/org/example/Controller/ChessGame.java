@@ -24,13 +24,17 @@ public class ChessGame {
                 }
                 cont ++;
                 if (piece == null && (i+j)%2 == 0) {
-                    System.out.print(" . ");
+                    System.out.print("\u001B[47m   \u001B[0m");
                 } else if (piece == null) {
-                    System.out.printf("\u001B[30m . \u001B[0m", piece);
-                } else if(piece.getColor() == ColorPiece.WHITE){
-                    System.out.print(" "+piece+" ");
+                    System.out.print("\u001B[44m   \u001B[0m");
+                } else if(piece.getColor() == ColorPiece.WHITE && (i+j)%2 == 0){
+                    System.out.print("\u001B[47m "+piece+" \u001B[0m");
+                } else if (piece.getColor() == ColorPiece.WHITE) {
+                    System.out.print("\u001B[44m " +piece+ " \u001B[0m");
+                } else if (piece.getColor() == ColorPiece.BLACK && (i+j)%2 == 0){
+                    System.out.print(" \u001B[47m\u001B[30m"+piece+"\u001B[0m ");
                 } else{
-                    System.out.printf(" \u001B[30m%s\u001B[0m ",piece);
+                    System.out.print(" \u001B[44m\u001B[30m"+piece+"\u001B[0m ");
                 }
             }
             System.out.println();
