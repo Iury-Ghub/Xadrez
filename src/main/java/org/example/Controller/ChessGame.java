@@ -15,34 +15,52 @@ public class ChessGame {
         resetGame();
     }
     public void viewGame(){
-        int line = 8,cont = 0;
+        int line = 8;
         for (int i = 0; i<board.length;i++) {
             for (int j = 0; j<board[i].length;j++) {
-                Piece piece = board[i][j];
-                if(cont == 0){
+                if(j == 0){
                     System.out.print("\u001B[33m"+line--+"|\u001B[0m");
                 }
-                cont ++;
-                if (piece == null && (i+j)%2 == 0) {
-                    System.out.print("\u001B[47m   \u001B[0m");
-                } else if (piece == null) {
-                    System.out.print("\u001B[44m   \u001B[0m");
-                } else if(piece.getColor() == ColorPiece.WHITE && (i+j)%2 == 0){
-                    System.out.print("\u001B[47m "+piece+" \u001B[0m");
-                } else if (piece.getColor() == ColorPiece.WHITE) {
-                    System.out.print("\u001B[44m " +piece+ " \u001B[0m");
-                } else if (piece.getColor() == ColorPiece.BLACK && (i+j)%2 == 0){
-                    System.out.print(" \u001B[47m\u001B[30m"+piece+"\u001B[0m ");
-                } else{
-                    System.out.print(" \u001B[44m\u001B[30m"+piece+"\u001B[0m ");
-                }
+                getBoard(i, j);
             }
             System.out.println();
-            cont = 0;
         }
         System.out.println("\u001B[33m   _  _  _  _  _  _  _  _\u001B[0m");
         System.out.println("\u001B[33m#  a  b  c  d  e  f  g  h\u001B[0m");
         System.out.println();
+    }
+
+    public void viewGameBlack(){
+        int line = 1;
+        for (int i = board.length-1;i >= 0;i--) {
+            for (int j = board[i].length-1; j >= 0;j--) {
+                if(j == 7){
+                    System.out.print("\u001B[33m"+line+++"|\u001B[0m");
+                }
+                getBoard(i, j);
+            }
+            System.out.println();
+        }
+        System.out.println("\u001B[33m   _  _  _  _  _  _  _  _\u001B[0m");
+        System.out.println("\u001B[33m#  a  b  c  d  e  f  g  h\u001B[0m");
+        System.out.println();
+    }
+
+    private void getBoard(int i, int j) {
+        Piece piece = board[i][j];
+        if (piece == null && (i+j)%2 == 0) {
+            System.out.print("\u001B[47m   \u001B[0m");
+        } else if (piece == null) {
+            System.out.print("\u001B[44m   \u001B[0m");
+        } else if(piece.getColor() == ColorPiece.WHITE && (i+j)%2 == 0){
+            System.out.print("\u001B[47m "+piece+" \u001B[0m");
+        } else if (piece.getColor() == ColorPiece.WHITE) {
+            System.out.print("\u001B[44m " +piece+ " \u001B[0m");
+        } else if (piece.getColor() == ColorPiece.BLACK && (i+j)%2 == 0){
+            System.out.print(" \u001B[47m\u001B[30m"+piece+"\u001B[0m ");
+        } else {
+            System.out.print(" \u001B[44m\u001B[30m" + piece + "\u001B[0m ");
+        }
     }
 
     public void MoveWhite(NamePiece namePiece, Square positionPiece, Square positionMove){
