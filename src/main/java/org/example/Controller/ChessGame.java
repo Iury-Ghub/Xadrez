@@ -16,23 +16,28 @@ public class ChessGame {
     }
     public void viewGame(){
         int line = 8,cont = 0;
-        for (Piece[] pieces : board) {
-            for (Piece piece : pieces) {
+        for (int i = 0; i<board.length;i++) {
+            for (int j = 0; j<board[i].length;j++) {
+                Piece piece = board[i][j];
                 if(cont == 0){
-                    System.out.print(line--+"|");
+                    System.out.print("\u001B[33m"+line--+"|\u001B[0m");
                 }
                 cont ++;
-                if (piece == null) {
+                if (piece == null && (i+j)%2 == 0) {
                     System.out.print(" . ");
-                } else {
+                } else if (piece == null) {
+                    System.out.printf("\u001B[30m . \u001B[0m", piece);
+                } else if(piece.getColor() == ColorPiece.WHITE){
                     System.out.print(" "+piece+" ");
+                } else{
+                    System.out.printf(" \u001B[30m%s\u001B[0m ",piece);
                 }
             }
             System.out.println();
             cont = 0;
         }
-        System.out.println("   _  _  _  _  _  _  _  _");
-        System.out.println("#  a  b  c  d  e  f  g  h");
+        System.out.println("\u001B[33m   _  _  _  _  _  _  _  _\u001B[0m");
+        System.out.println("\u001B[33m#  a  b  c  d  e  f  g  h\u001B[0m");
         System.out.println();
     }
 
@@ -59,7 +64,7 @@ public class ChessGame {
             }
         } else if (board[x2][y2] != null
                 && board[x2][y2].getColor() == ColorPiece.BLACK
-                && (board[x2+1][y2-1] == board[x1][x2] || board[x2+1][y2+1] == board[x1][x2])) {
+                && (x2 == x1-1 && y2 == y1+1 || y2 == y1 - 1)){
             Piece piece = board[x2][y2];
             board[x2][y2] = board[x1][y1];
             board[x1][y1] = null;
@@ -107,7 +112,7 @@ public class ChessGame {
                 if(i==0 && j==4){
                     board[i][j] = new Piece(NamePiece.K,new Square(i,j),ColorPiece.BLACK);
                 } else if (i==7 && j==3) {
-                    board[i][j] = new Piece(NamePiece.K,new Square(i,j),ColorPiece.BLACK);
+                    board[i][j] = new Piece(NamePiece.K,new Square(i,j),ColorPiece.WHITE);
                 }
 
                 //Queen
