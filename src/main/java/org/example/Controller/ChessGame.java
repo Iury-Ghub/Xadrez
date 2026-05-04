@@ -12,6 +12,87 @@ public class ChessGame {
     Piece[] captureWhite = new Piece[15];
 
     public ChessGame() {
+        resetGame();
+    }
+    public void viewGame(){
+        int line = 8,cont = 0;
+        for (Piece[] pieces : board) {
+            for (Piece piece : pieces) {
+                if(cont == 0){
+                    System.out.print(line--+"|");
+                }
+                cont ++;
+                if (piece == null) {
+                    System.out.print(" . ");
+                } else {
+                    System.out.print(" "+piece+" ");
+                }
+            }
+            System.out.println();
+            cont = 0;
+        }
+        System.out.println("   _  _  _  _  _  _  _  _");
+        System.out.println("#  a  b  c  d  e  f  g  h");
+        System.out.println();
+    }
+
+    public void MoveWhite(NamePiece namePiece, Square positionPiece, Square positionMove){
+        if (Objects.requireNonNull(namePiece) == NamePiece.P) {
+            pawnsMoveWhite(positionPiece, positionMove);
+        }
+    }
+
+    public void pawnsMoveWhite(Square positionPiece, Square positionMove){
+        int x1 = 8-positionPiece.getLine(), x2 = 8 -positionMove.getLine();
+        int y1 = positionPiece.getColum(), y2 = positionMove.getColum();
+
+        if(!(board[x1][y1] != null && board[x1][y1].getName() == NamePiece.P && board[x1][y1].getColor() == ColorPiece.WHITE)){
+            return;
+        }
+        if(board[x2][y2] == null && y1 == y2){
+            if(x1 == x2+1){
+                board[x2][y2] = board[x1][y1];
+                board[x1][y1] = null;
+            } else if (x1 == 6  && x1 == x2+2) {
+                board[x2][y2] = board[x1][y1];
+                board[x1][y1] = null;
+            }
+        } else if (board[x2][y2] != null
+                && board[x2][y2].getColor() == ColorPiece.BLACK
+                && (board[x2+1][y2-1] == board[x1][x2] || board[x2+1][y2+1] == board[x1][x2])) {
+            Piece piece = board[x2][y2];
+            board[x2][y2] = board[x1][y1];
+            board[x1][y1] = null;
+        }
+    }
+    public void pawnsMoveBlack(Square positionPiece, Square positionMove){
+        int x1 = 8-positionPiece.getLine(), x2 = 8 -positionMove.getLine();
+        int y1 = positionPiece.getColum(), y2 = positionMove.getColum();
+
+        if(!(board[x1][y1] != null && board[x1][y1].getName() == NamePiece.P && board[x1][y1].getColor() == ColorPiece.BLACK)){
+            return;
+        }
+
+        if(board[x2][y2] == null && y1 == y2){
+            if(x1 == x2-1){
+                board[x2][y2] = board[x1][y1];
+                board[x1][y1] = null;
+            } else if (x1 == 1 && x1 == x2-2) {
+                board[x2][y2] = board[x1][y1];
+                board[x1][y1] = null;
+            }
+        } else if (board[x2][y2] != null
+                && board[x2][y2].getColor() == ColorPiece.WHITE
+                && (x2 == x1+1 && y2 == y1+1 || y2 == y1 - 1)){
+            Piece piece = board[x2][y2];
+            board[x2][y2] = board[x1][y1];
+            board[x1][y1] = null;
+        }
+    }
+
+
+
+    public void resetGame(){
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
 
@@ -59,78 +140,4 @@ public class ChessGame {
             }
         }
     }
-    public void viewGame(){
-        int line = 8,cont = 0;
-        for (Piece[] pieces : board) {
-            for (Piece piece : pieces) {
-                if(cont == 0){
-                    System.out.print(line--+"|");
-                }
-                cont ++;
-                if (piece == null) {
-                    System.out.print(" . ");
-                } else {
-                    System.out.print(" "+piece+" ");
-                }
-            }
-            System.out.println();
-            cont = 0;
-        }
-        System.out.println("   _  _  _  _  _  _  _  _");
-        System.out.println("#  a  b  c  d  e  f  g  h");
-        System.out.println();
-    }
-
-    public void MoveWhite(NamePiece namePiece, Square positionPiece, Square positionMove){
-        if (Objects.requireNonNull(namePiece) == NamePiece.P) {
-            pawnsMoveWhite(positionPiece, positionMove);
-        }
-    }
-
-    public void pawnsMoveWhite(Square positionPiece, Square positionMove){
-        int x1 = 8-positionPiece.getLine(), x2 = 8 -positionMove.getLine();
-        int y1 = positionPiece.getColum(), y2 = positionMove.getColum();
-
-        if(board[x2][y2] == null && y1 == y2){
-            if(x1 == x2+1){
-                board[x2][y2] = board[x1][y1];
-                board[x1][y1] = null;
-            } else if (x1 == 6  && x1 == x2+2) {
-                board[x2][y2] = board[x1][y1];
-                board[x1][y1] = null;
-            }
-        } else if (board[x2][y2] != null
-                && board[x2][y2].getColor() == ColorPiece.BLACK
-                && (board[x2+1][y2-1] == board[x1][x2] || board[x2+1][y2+1] == board[x1][x2])) {
-            Piece piece = board[x2][y2];
-            board[x2][y2] = board[x1][y1];
-            board[x1][y1] = null;
-        }
-    }
-    public void pawnsMoveBlack(Square positionPiece, Square positionMove){
-        int x1 = 8-positionPiece.getLine(), x2 = 8 -positionMove.getLine();
-        int y1 = positionPiece.getColum(), y2 = positionMove.getColum();
-
-        if(!(board[x1][x2] != null && board[x1][x2].getName() == NamePiece.P)){
-            return;
-        }
-
-        if(board[x2][y2] == null && y1 == y2){
-            if(x1 == x2-1){
-                board[x2][y2] = board[x1][y1];
-                board[x1][y1] = null;
-            } else if (x1 == 1 && x1 == x2-2) {
-                board[x2][y2] = board[x1][y1];
-                board[x1][y1] = null;
-            }
-        } else if (board[x2][y2] != null
-                && board[x2][y2].getColor() == ColorPiece.WHITE
-                && (x2 == x1+1 && y2 == x1+1 || y2 == x1 - 1)){
-            Piece piece = board[x2][y2];
-            board[x2][y2] = board[x1][y1];
-            board[x1][y1] = null;
-        }
-    }
-
-    public void resetGame(){}
 }
