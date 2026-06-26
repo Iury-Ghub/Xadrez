@@ -126,18 +126,75 @@
   .tag-red    { background: rgba(248,113,113,.15); border-color: var(--red);    color: var(--red); }
 
   /* ── ARCHITECTURE BOX ────────────────────────────── */
-  .arch {
-    background: #100c1c;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 24px;
-    font-family: monospace;
-    font-size: .85rem;
-    color: var(--purple4);
-    line-height: 1.9;
+  /* ── CSS ARCHITECTURE DIAGRAM ───────────────────── */
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
   }
-  .arch .layer { color: var(--purple3); font-weight: 700; }
-  .arch .arrow { color: var(--accent); }
+  .arch-box {
+    background: #1a1030;
+    border: 2px solid var(--purple1);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .arch-box .layer-title {
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    color: var(--purple3);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .arch-box .layer-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .arch-box .layer-chip {
+    background: rgba(124,58,237,.3);
+    border: 1px solid var(--purple1);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--purple4);
+    white-space: nowrap;
+  }
+  .arch-box .layer-arrow {
+    font-size: 1rem;
+    color: var(--accent);
+    font-weight: 700;
+    line-height: 1;
+  }
+  .arch-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .arch-connector .seg {
+    width: 2px;
+    height: 10px;
+    background: var(--accent);
+    opacity: .7;
+  }
+  .arch-connector .lbl {
+    font-size: .72rem;
+    color: var(--muted);
+    margin: 2px 0;
+    white-space: nowrap;
+  }
+  .arch-connector .tip {
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid var(--accent);
+  }
 
   /* ── HERO (capa) ─────────────────────────────────── */
   .hero {
@@ -241,23 +298,43 @@
         </div>
       </div>
       <div class="col">
-        <div class="arch">
-<span class="layer">┌─────────────────────────────┐</span>
-<span class="layer">│         View (UI)           │</span>
-│  ChessFrame ──► BoardPanel  │
-<span class="layer">└────────────┬────────────────┘</span>
-             <span class="arrow">│ cliques</span>
-             <span class="arrow">▼</span>
-<span class="layer">┌─────────────────────────────┐</span>
-<span class="layer">│       Controller            │</span>
-│     ChessController         │
-<span class="layer">└────────────┬────────────────┘</span>
-             <span class="arrow">│ chamadas</span>
-             <span class="arrow">▼</span>
-<span class="layer">┌─────────────────────────────┐</span>
-<span class="layer">│          Model              │</span>
-│  Game ──► Board ──► Piece   │
-<span class="layer">└─────────────────────────────┘</span>
+        <div class="arch-diagram">
+          <div class="arch-box">
+            <div class="layer-title">View (UI)</div>
+            <div class="layer-row">
+              <div class="layer-chip">ChessFrame</div>
+              <div class="layer-arrow">&#9658;</div>
+              <div class="layer-chip">BoardPanel</div>
+            </div>
+          </div>
+          <div class="arch-connector">
+            <div class="seg"></div>
+            <div class="lbl">eventos de clique</div>
+            <div class="seg"></div>
+            <div class="tip"></div>
+          </div>
+          <div class="arch-box">
+            <div class="layer-title">Controller</div>
+            <div class="layer-row">
+              <div class="layer-chip">ChessController</div>
+            </div>
+          </div>
+          <div class="arch-connector">
+            <div class="seg"></div>
+            <div class="lbl">chamadas de método</div>
+            <div class="seg"></div>
+            <div class="tip"></div>
+          </div>
+          <div class="arch-box">
+            <div class="layer-title">Model</div>
+            <div class="layer-row">
+              <div class="layer-chip">Game</div>
+              <div class="layer-arrow">&#9658;</div>
+              <div class="layer-chip">Board</div>
+              <div class="layer-arrow">&#9658;</div>
+              <div class="layer-chip">Piece</div>
+            </div>
+          </div>
         </div>
         <div class="card" style="margin-top:14px;">
           <h3>Padrão Arquitetural</h3>
