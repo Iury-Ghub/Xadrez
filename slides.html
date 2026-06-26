@@ -126,18 +126,62 @@
   .tag-red    { background: rgba(248,113,113,.15); border-color: var(--red);    color: var(--red); }
 
   /* ── ARCHITECTURE BOX ────────────────────────────── */
-  .arch {
-    background: #100c1c;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 24px;
-    font-family: monospace;
-    font-size: .85rem;
-    color: var(--purple4);
-    line-height: 1.9;
+  /* ── CSS ARCHITECTURE DIAGRAM ───────────────────── */
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
   }
-  .arch .layer { color: var(--purple3); font-weight: 700; }
-  .arch .arrow { color: var(--accent); }
+  .arch-box {
+    width: 100%;
+    background: #1a1030;
+    border: 2px solid var(--purple1);
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+  .arch-box .layer-title {
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    color: var(--purple3);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .arch-box .layer-content {
+    font-size: .92rem;
+    color: var(--purple4);
+    font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+  }
+  .arch-box .layer-content span { color: var(--accent); }
+  .arch-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2px 0;
+    color: var(--accent);
+    font-size: .8rem;
+    line-height: 1.3;
+  }
+  .arch-connector .arrow-line {
+    width: 2px;
+    height: 16px;
+    background: var(--accent);
+    opacity: .7;
+  }
+  .arch-connector .arrow-label {
+    font-size: .75rem;
+    color: var(--muted);
+    margin: 2px 0;
+  }
+  .arch-connector .arrow-head {
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 9px solid var(--accent);
+  }
 
   /* ── HERO (capa) ─────────────────────────────────── */
   .hero {
@@ -241,23 +285,31 @@
         </div>
       </div>
       <div class="col">
-        <div class="arch">
-<span class="layer">┌─────────────────────────────┐</span>
-<span class="layer">│         View (UI)           │</span>
-│  ChessFrame ──► BoardPanel  │
-<span class="layer">└────────────┬────────────────┘</span>
-             <span class="arrow">│ cliques</span>
-             <span class="arrow">▼</span>
-<span class="layer">┌─────────────────────────────┐</span>
-<span class="layer">│       Controller            │</span>
-│     ChessController         │
-<span class="layer">└────────────┬────────────────┘</span>
-             <span class="arrow">│ chamadas</span>
-             <span class="arrow">▼</span>
-<span class="layer">┌─────────────────────────────┐</span>
-<span class="layer">│          Model              │</span>
-│  Game ──► Board ──► Piece   │
-<span class="layer">└─────────────────────────────┘</span>
+        <div class="arch-diagram">
+          <div class="arch-box">
+            <div class="layer-title">View (UI)</div>
+            <div class="layer-content">ChessFrame <span>──►</span> BoardPanel</div>
+          </div>
+          <div class="arch-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-label">eventos de clique</div>
+            <div class="arrow-line"></div>
+            <div class="arrow-head"></div>
+          </div>
+          <div class="arch-box">
+            <div class="layer-title">Controller</div>
+            <div class="layer-content">ChessController</div>
+          </div>
+          <div class="arch-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-label">chamadas de método</div>
+            <div class="arrow-line"></div>
+            <div class="arrow-head"></div>
+          </div>
+          <div class="arch-box">
+            <div class="layer-title">Model</div>
+            <div class="layer-content">Game <span>──►</span> Board <span>──►</span> Piece</div>
+          </div>
         </div>
         <div class="card" style="margin-top:14px;">
           <h3>Padrão Arquitetural</h3>
