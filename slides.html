@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xadrez — Apresentação do Sistema</title>
+<style>
+  :root {
+    --bg:       #0d0a14;
+    --surface:  #1a1428;
+    --card:     #221b36;
+    --border:   #3d2f60;
+    --purple1:  #7c3aed;
+    --purple2:  #9d5cf7;
+    --purple3:  #c084fc;
+    --purple4:  #e9d5ff;
+    --accent:   #a855f7;
+    --green:    #4ade80;
+    --yellow:   #fbbf24;
+    --red:      #f87171;
+    --text:     #f3e8ff;
+    --muted:    #a78bca;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── SLIDES ─────────────────────────────────────── */
+  .slideshow {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    padding: 40px 60px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    animation: fadeIn .35s ease;
+  }
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TYPOGRAPHY ─────────────────────────────────── */
+  h1 { font-size: 2.6rem; font-weight: 800; color: var(--purple3); line-height: 1.15; }
+  h2 { font-size: 1.9rem; font-weight: 700; color: var(--purple3); margin-bottom: 20px; }
+  h3 { font-size: 1.15rem; font-weight: 700; color: var(--purple4); margin-bottom: 6px; }
+  p  { font-size: 1.02rem; color: var(--muted); line-height: 1.65; }
+
+  .subtitle { font-size: 1.25rem; color: var(--purple4); margin-top: 10px; opacity: .85; }
+  .badge {
+    display: inline-block; padding: 3px 12px; border-radius: 99px;
+    font-size: .78rem; font-weight: 700; letter-spacing: .05em;
+    background: var(--purple1); color: #fff; margin-bottom: 12px;
+  }
+
+  /* ── CARDS ──────────────────────────────────────── */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--purple1), var(--accent));
+  }
+  .card p { font-size: .93rem; }
+
+  /* ── CODE BLOCKS ─────────────────────────────────── */
+  pre {
+    background: #100c1c;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: .82rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    color: #d4b8ff;
+  }
+  .kw  { color: #c084fc; font-weight: 700; }
+  .cls { color: #67e8f9; }
+  .fn  { color: #4ade80; }
+  .str { color: #fbbf24; }
+  .cm  { color: #6b7280; font-style: italic; }
+  .ann { color: #f87171; }
+
+  /* ── LABELS ─────────────────────────────────────── */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px; border-radius: 6px;
+    font-size: .76rem; font-weight: 700;
+    background: rgba(124,58,237,.35);
+    border: 1px solid var(--purple1);
+    color: var(--purple3);
+    margin-right: 4px; margin-bottom: 4px;
+  }
+  .tag-green  { background: rgba(74,222,128,.15); border-color: var(--green);  color: var(--green); }
+  .tag-yellow { background: rgba(251,191,36,.15);  border-color: var(--yellow); color: var(--yellow); }
+  .tag-red    { background: rgba(248,113,113,.15); border-color: var(--red);    color: var(--red); }
+
+  /* ── ARCHITECTURE BOX ────────────────────────────── */
+  .arch {
+    background: #100c1c;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 24px;
+    font-family: monospace;
+    font-size: .85rem;
+    color: var(--purple4);
+    line-height: 1.9;
+  }
+  .arch .layer { color: var(--purple3); font-weight: 700; }
+  .arch .arrow { color: var(--accent); }
+
+  /* ── HERO (capa) ─────────────────────────────────── */
+  .hero {
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    height: 100%; text-align: center;
+    background: radial-gradient(ellipse at 50% 40%, #2d1b69 0%, var(--bg) 70%);
+  }
+  .hero .chess-icon { font-size: 5rem; margin-bottom: 18px; filter: drop-shadow(0 0 24px #7c3aed); }
+  .hero h1 { font-size: 3.2rem; }
+
+  /* ── CONCEPT HEADER ──────────────────────────────── */
+  .concept-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 22px;
+  }
+  .concept-num {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple1), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 800; color: #fff;
+    flex-shrink: 0;
+  }
+
+  /* ── NAVIGATION ──────────────────────────────────── */
+  .nav {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--purple3);
+    padding: 8px 22px; border-radius: 8px;
+    font-size: .9rem; font-weight: 700; cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .nav-btn:hover { background: var(--purple1); border-color: var(--purple1); color: #fff; }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+  .progress { font-size: .85rem; color: var(--muted); }
+  .dots { display: flex; gap: 6px; }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); cursor: pointer; transition: background .2s;
+  }
+  .dot.on { background: var(--accent); }
+
+  /* ── UTIL ────────────────────────────────────────── */
+  .row { display: flex; gap: 16px; align-items: flex-start; }
+  .col { flex: 1; }
+  .mt { margin-top: 16px; }
+  .mb { margin-bottom: 12px; }
+  ul { padding-left: 20px; }
+  ul li { font-size: .95rem; color: var(--muted); margin-bottom: 5px; line-height: 1.5; }
+  li strong { color: var(--purple4); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SLIDES ═══════════════ -->
+<div class="slideshow">
+
+  <!-- 0 · CAPA -->
+  <section class="slide active">
+    <div class="hero">
+      <div class="chess-icon">♟</div>
+      <h1>Xadrez</h1>
+      <p class="subtitle">Jogo de Xadrez em Java — Apresentação do Sistema</p>
+      <div style="margin-top:28px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <span class="tag">Java Swing</span>
+        <span class="tag">MVP Pattern</span>
+        <span class="tag">OOP</span>
+        <span class="tag">FIDE Rules</span>
+      </div>
+      <p style="margin-top:30px; font-size:.9rem; opacity:.55;">Use as setas do teclado ou os botões abaixo para navegar</p>
+    </div>
+  </section>
+
+  <!-- 1 · VISÃO GERAL -->
+  <section class="slide">
+    <h2>Visão Geral do Sistema</h2>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>O que é?</h3>
+          <p>Jogo de xadrez para dois jogadores com interface gráfica em <strong>Java Swing</strong>, implementando as regras completas do xadrez FIDE.</p>
+        </div>
+        <div class="card mb">
+          <h3>Funcionalidades principais</h3>
+          <ul>
+            <li>Tabuleiro 8×8 com peças em Unicode (♔ ♕ ♖ ♗ ♘ ♙)</li>
+            <li>Destaque visual da peça selecionada e movimentos legais</li>
+            <li>Roque curto (O-O) e roque longo (O-O-O)</li>
+            <li>Captura en passant e promoção de peão</li>
+            <li>Detecção de xeque, xeque-mate e afogamento</li>
+            <li>Histórico em notação algébrica padrão</li>
+            <li>Salvar e carregar partidas em arquivo texto</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="arch">
+<span class="layer">┌─────────────────────────────┐</span>
+<span class="layer">│         View (UI)           │</span>
+│  ChessFrame ──► BoardPanel  │
+<span class="layer">└────────────┬────────────────┘</span>
+             <span class="arrow">│ cliques</span>
+             <span class="arrow">▼</span>
+<span class="layer">┌─────────────────────────────┐</span>
+<span class="layer">│       Controller            │</span>
+│     ChessController         │
+<span class="layer">└────────────┬────────────────┘</span>
+             <span class="arrow">│ chamadas</span>
+             <span class="arrow">▼</span>
+<span class="layer">┌─────────────────────────────┐</span>
+<span class="layer">│          Model              │</span>
+│  Game ──► Board ──► Piece   │
+<span class="layer">└─────────────────────────────┘</span>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3>Padrão Arquitetural</h3>
+          <p><strong>MVP</strong> — separa interface gráfica, lógica de controle e regras de negócio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · ESTRUTURA DE PACOTES -->
+  <section class="slide">
+    <h2>Estrutura de Pacotes</h2>
+    <div class="grid grid-2" style="gap:14px;">
+      <div class="card">
+        <h3>📦 chess.model.pieces</h3>
+        <span class="tag-yellow tag">Hierarquia de Peças</span>
+        <ul style="margin-top:8px;">
+          <li><strong>Piece.java</strong> — classe abstrata base</li>
+          <li><strong>SlidingPiece.java</strong> — abstrata para Bispo, Torre, Dama</li>
+          <li><strong>King, Knight, Pawn</strong> — extendem Piece diretamente</li>
+          <li><strong>Bishop, Rook, Queen</strong> — extendem SlidingPiece</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📦 chess.model</h3>
+        <span class="tag tag-green">Regras e Estado</span>
+        <ul style="margin-top:8px;">
+          <li><strong>Game.java</strong> — máquina de estados da partida</li>
+          <li><strong>Board.java</strong> — grade 8×8 e movimentação</li>
+          <li><strong>Alliance.java</strong> — enum WHITE / BLACK</li>
+          <li><strong>GameState.java</strong> — ACTIVE / CHECK / CHECKMATE…</li>
+          <li><strong>Position, MoveRecord, MoveNotationFormatter</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📦 chess.ui</h3>
+        <span class="tag">Interface Gráfica</span>
+        <ul style="margin-top:8px;">
+          <li><strong>ChessFrame.java</strong> — janela principal (JFrame)</li>
+          <li><strong>ChessBoardPanel.java</strong> — grade de JButtons</li>
+          <li><strong>SquareClickListener.java</strong> — interface de callback</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📦 chess.util / controller</h3>
+        <span class="tag tag-red">Utilitários</span>
+        <ul style="margin-top:8px;">
+          <li><strong>ChessController.java</strong> — fachada View ↔ Model</li>
+          <li><strong>GameFileManeger.java</strong> — salvar / carregar arquivo</li>
+          <li><strong>DebugLog.java</strong> — log no console</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · CLASSE ABSTRATA -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">1</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Classe Abstrata</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Onde está no projeto</h3>
+          <p><strong>Piece.java</strong> e <strong>SlidingPiece.java</strong> — ambas são classes abstratas.</p>
+          <ul style="margin-top:8px;">
+            <li><code>Piece</code> — define o contrato base de todas as peças</li>
+            <li><code>SlidingPiece extends Piece</code> — especialização para peças deslizantes (Bispo, Torre, Dama)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Por que abstrata?</h3>
+          <p>Não faz sentido instanciar uma "Peça genérica". Cada subclasse concreta implementa <code>getName()</code> e <code>getPseudoLegalMoves()</code> de acordo com suas regras de movimentação.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// Piece.java — classe abstrata base</span>
+<span class="kw">public abstract class</span> <span class="cls">Piece</span> {
+    <span class="kw">private final</span> Alliance alliance;
+    <span class="kw">private final</span> String symbol;
+
+    <span class="kw">public abstract</span> String <span class="fn">getName</span>();
+
+    <span class="kw">public abstract</span> List&lt;Position&gt;
+        <span class="fn">getPseudoLegalMoves</span>(Board board,
+                            Position from);
+
+    <span class="kw">public</span> List&lt;Position&gt; <span class="fn">getAttackSquares</span>(...) {
+        <span class="kw">return</span> <span class="fn">getPseudoLegalMoves</span>(board, from);
+    }
+}
+
+<span class="cm">// SlidingPiece.java — segunda classe abstrata</span>
+<span class="kw">public abstract class</span> <span class="cls">SlidingPiece</span>
+        <span class="kw">extends</span> <span class="cls">Piece</span> {
+    <span class="kw">protected</span> List&lt;Position&gt; <span class="fn">collectSlidingMoves</span>(
+            Board board, Position from,
+            <span class="kw">int</span>[][] directions) { ... }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · HERANÇA -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">2</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Herança</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Hierarquia de peças</h3>
+          <pre style="margin-top:6px;">
+<span class="cls">Piece</span>  <span class="arrow">(abstrata)</span>
+├── <span class="cls">King</span>
+├── <span class="cls">Knight</span>
+├── <span class="cls">Pawn</span>
+└── <span class="cls">SlidingPiece</span>  <span class="arrow">(abstrata)</span>
+    ├── <span class="cls">Bishop</span>
+    ├── <span class="cls">Rook</span>
+    └── <span class="cls">Queen</span></pre>
+        </div>
+        <div class="card">
+          <h3>Benefício</h3>
+          <p>Código comum (aliança, símbolo, verificação de inimigo) fica em <code>Piece</code>. Cada subclasse herda e adiciona apenas suas próprias regras de movimentação.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// Queen.java herda de SlidingPiece</span>
+<span class="kw">public final class</span> <span class="cls">Queen</span>
+        <span class="kw">extends</span> <span class="cls">SlidingPiece</span> {
+
+    <span class="kw">private static final int</span>[][] DIRECTIONS = {
+        {-1,0},{1,0},{0,-1},{0,1},  <span class="cm">// retas</span>
+        {-1,-1},{-1,1},{1,-1},{1,1} <span class="cm">// diagonais</span>
+    };
+
+    <span class="kw">public</span> <span class="fn">Queen</span>(Alliance alliance) {
+        <span class="kw">super</span>(alliance,
+              alliance == WHITE ? <span class="str">"♕"</span> : <span class="str">"♛"</span>);
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> <span class="str">"Rainha"</span>; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> List&lt;Position&gt; <span class="fn">getPseudoLegalMoves</span>(...) {
+        <span class="kw">return</span> <span class="fn">collectSlidingMoves</span>(board, from,
+                                   DIRECTIONS);
+    }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · SOBRESCRITA -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">3</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Sobrescrita (Override)</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Onde ocorre</h3>
+          <p>Cada subclasse de <code>Piece</code> sobrescreve <code>getPseudoLegalMoves()</code> com suas próprias regras. O <code>Pawn</code> também sobrescreve <code>getAttackSquares()</code>, pois o peão ataca em diagonal mas move reto — comportamento diferente do padrão herdado.</p>
+        </div>
+        <div class="card">
+          <h3>Polimorfismo em ação</h3>
+          <p>O <code>Board</code> chama <code>piece.getPseudoLegalMoves()</code> sem saber se é um Rei, Peão ou Rainha — o tipo correto é resolvido em tempo de execução.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// Pawn.java sobrescreve DOIS métodos</span>
+<span class="kw">public final class</span> <span class="cls">Pawn</span> <span class="kw">extends</span> <span class="cls">Piece</span> {
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> List&lt;Position&gt; <span class="fn">getPseudoLegalMoves</span>(
+            Board board, Position from) {
+        <span class="cm">// move para frente, dois passos iniciais</span>
+        ...
+    }
+
+    <span class="ann">@Override</span>
+    <span class="cm">// ↑ sobrescreve o comportamento padrão de Piece</span>
+    <span class="kw">public</span> List&lt;Position&gt; <span class="fn">getAttackSquares</span>(
+            Board board, Position from) {
+        <span class="cm">// ataque DIAGONAL — diferente do movimento!</span>
+        ...
+    }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · SOBRECARGA -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">4</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Sobrecarga (Overload)</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Onde está no projeto</h3>
+          <p>A classe <code>Board.java</code> define dois métodos <code>getPiece()</code> com assinaturas diferentes — um recebe um objeto <code>Position</code>, outro recebe dois inteiros <code>(row, col)</code>.</p>
+        </div>
+        <div class="card">
+          <h3>Propósito</h3>
+          <p>Conveniência de API: o chamador pode usar a forma que melhor se encaixa no contexto — objeto <code>Position</code> quando já tem um, ou coordenadas brutas quando está iterando linhas e colunas.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// Board.java — mesmo nome, assinaturas diferentes</span>
+<span class="kw">public class</span> <span class="cls">Board</span> {
+
+    <span class="cm">// versão 1: recebe objeto Position</span>
+    <span class="kw">public</span> Piece <span class="fn">getPiece</span>(Position position) {
+        <span class="kw">if</span> (position == <span class="kw">null</span> ||
+                !<span class="fn">isInside</span>(position))
+            <span class="kw">return null</span>;
+        <span class="kw">return</span> squares[position.getRow()]
+                       [position.getCol()];
+    }
+
+    <span class="cm">// versão 2: recebe row e col separados</span>
+    <span class="kw">public</span> Piece <span class="fn">getPiece</span>(<span class="kw">int</span> row, <span class="kw">int</span> col) {
+        <span class="kw">if</span> (!<span class="fn">isInside</span>(row, col))
+            <span class="kw">return null</span>;
+        <span class="kw">return</span> squares[row][col];
+    }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · COLEÇÕES -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">5</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Coleções</h2>
+      </div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Game.java — estado da partida</h3>
+        <pre>
+<span class="kw">private</span> List&lt;Position&gt;
+    selectedLegalMoves;    <span class="cm">// casas legais</span>
+
+<span class="kw">private</span> List&lt;MoveRecord&gt;
+    moveHistory;           <span class="cm">// histórico</span>
+
+<span class="cm">// computeLegalMoves usa ArrayList</span>
+List&lt;Position&gt; pseudoMoves =
+  <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;(
+    piece.<span class="fn">getPseudoLegalMoves</span>(board, from));
+
+List&lt;Position&gt; legalMoves =
+  <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();</pre>
+      </div>
+      <div class="card">
+        <h3>GameFileManeger.java — leitura de arquivo</h3>
+        <pre>
+<span class="kw">public</span> List&lt;Position[]&gt;
+    <span class="fn">carregarPartida</span>(String nome)
+        <span class="kw">throws</span> IOException {
+
+  List&lt;Position[]&gt; moves =
+      <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+  <span class="cm">// cada linha vira uma Position[]</span>
+  <span class="cm">// e entra na lista</span>
+  ...
+  <span class="kw">return</span> moves;
+}</pre>
+      </div>
+      <div class="card">
+        <h3>Piece subclasses — movimentos</h3>
+        <pre>
+<span class="cm">// Pawn.java</span>
+List&lt;Position&gt; moves =
+    <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;Position&gt;();
+
+<span class="cm">// SlidingPiece.java</span>
+List&lt;Position&gt; moves =
+    <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;Position&gt;();</pre>
+      </div>
+      <div class="card">
+        <h3>Resumo das coleções usadas</h3>
+        <ul>
+          <li><span class="tag">ArrayList</span> movimentos legais</li>
+          <li><span class="tag">ArrayList</span> histórico de lances</li>
+          <li><span class="tag">ArrayList</span> movimentos de en passant</li>
+          <li><span class="tag">ArrayList</span> partida carregada do arquivo</li>
+          <li><span class="tag tag-yellow">Collections.unmodifiableList</span> histórico público</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · INTERFACE GRÁFICA -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">6</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Interface Gráfica — Java Swing</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>ChessFrame.java — janela principal</h3>
+          <ul>
+            <li>Estende <code>JFrame</code></li>
+            <li>Contém <code>JLabel</code> para turno e status</li>
+            <li>Botões <code>JButton</code>: Novo jogo, Salvar, Carregar</li>
+            <li><code>JScrollPane</code> com área de histórico de jogadas</li>
+            <li>Painel lateral com <code>JPanel + BoxLayout</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>ChessBoardPanel.java — tabuleiro</h3>
+          <ul>
+            <li>Grade 8×8 de <code>JButton</code></li>
+            <li>Destaque verde (peça selecionada) e amarelo (destinos)</li>
+            <li>Notifica cliques via <code>SquareClickListener</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// ChessFrame.java</span>
+<span class="kw">public final class</span> <span class="cls">ChessFrame</span>
+        <span class="kw">extends</span> <span class="cls">JFrame</span> {
+
+  <span class="kw">private final</span> ChessBoardPanel boardPanel;
+  <span class="kw">private final</span> JLabel turnLabel;
+  <span class="kw">private final</span> JLabel statusLabel;
+  <span class="kw">private final</span> JButton resetButton;
+  <span class="kw">private final</span> JButton saveButton;
+  <span class="kw">private final</span> JButton loadButton;
+
+  <span class="kw">public</span> <span class="fn">ChessFrame</span>(...) {
+    JPanel root = <span class="kw">new</span> <span class="cls">JPanel</span>(
+        <span class="kw">new</span> <span class="cls">BorderLayout</span>(10, 10));
+    JPanel sidePanel = <span class="kw">new</span> <span class="cls">JPanel</span>();
+    JScrollPane historyScroll =
+        <span class="kw">new</span> <span class="cls">JScrollPane</span>(historyArea);
+    ...
+  }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · INTERFACE (Java) -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">7</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Interface Java — SquareClickListener</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Definição</h3>
+          <p>A interface <code>SquareClickListener</code> define o contrato de comunicação entre o painel do tabuleiro (<code>ChessBoardPanel</code>) e o <code>ChessFrame</code>.</p>
+        </div>
+        <div class="card mb">
+          <h3>Implementação anônima</h3>
+          <p>O <code>ChessFrame</code> cria uma implementação anônima de <code>SquareClickListener</code> ao instanciar o <code>ChessBoardPanel</code>, desacoplando a UI da lógica de controle.</p>
+        </div>
+        <div class="card">
+          <h3>Benefício</h3>
+          <p>Desacoplamento total — <code>ChessBoardPanel</code> não precisa conhecer <code>ChessFrame</code> nem <code>ChessController</code>. Apenas chama <code>onSquareClicked()</code>.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// SquareClickListener.java</span>
+<span class="kw">public interface</span> <span class="cls">SquareClickListener</span> {
+    <span class="kw">void</span> <span class="fn">onSquareClicked</span>(Position position);
+}
+
+<span class="cm">// ChessFrame.java — implementação anônima</span>
+<span class="kw">this</span>.boardPanel =
+    <span class="kw">new</span> <span class="cls">ChessBoardPanel</span>(
+        <span class="kw">new</span> <span class="cls">SquareClickListener</span>() {
+            <span class="ann">@Override</span>
+            <span class="kw">public void</span> <span class="fn">onSquareClicked</span>(
+                    Position position) {
+                controller
+                    .<span class="fn">handleSquareClick</span>(position);
+                <span class="fn">refreshView</span>();
+            }
+        }
+    );</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · MANIPULAÇÃO COM ARQUIVO -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">8</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Manipulação com Arquivo</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>GameFileManeger.java</h3>
+          <p>Responsável por serializar e desserializar partidas. Escreve no arquivo <code>partida.txt</code> em notação algébrica <code>e2-e4</code>.</p>
+        </div>
+        <div class="card">
+          <h3>Classes Java usadas</h3>
+          <ul>
+            <li><span class="tag">FileWriter</span> escrita de texto</li>
+            <li><span class="tag">BufferedReader</span> leitura eficiente linha a linha</li>
+            <li><span class="tag">FileReader</span> fonte de bytes do arquivo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// GameFileManeger.java</span>
+<span class="kw">public void</span> <span class="fn">salvarPartida</span>(
+        List&lt;MoveRecord&gt; historico,
+        String nomeArquivo)
+        <span class="kw">throws</span> IOException {
+
+  FileWriter fw = <span class="kw">new</span> <span class="cls">FileWriter</span>(nomeArquivo);
+  <span class="kw">for</span> (MoveRecord mr : historico) {
+    String move = mr.<span class="fn">getFrom</span>().<span class="fn">toAlgebraic</span>()
+        + <span class="str">"-"</span> + mr.<span class="fn">getTo</span>().<span class="fn">toAlgebraic</span>();
+    <span class="cm">// brancas na mesma linha, pretas quebra</span>
+    fw.<span class="fn">write</span>(isWhite ? move+<span class="str">" "</span> : move+<span class="str">"\n"</span>);
+  }
+  fw.<span class="fn">close</span>();
+}
+
+<span class="kw">public</span> List&lt;Position[]&gt; <span class="fn">carregarPartida</span>(
+        String nomeArquivo)
+        <span class="kw">throws</span> IOException {
+
+  BufferedReader reader = <span class="kw">new</span> <span class="cls">BufferedReader</span>(
+      <span class="kw">new</span> <span class="cls">FileReader</span>(nomeArquivo));
+  String linha;
+  <span class="kw">while</span> ((linha = reader.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+    <span class="cm">// parse e2-e4 → Position[from, to]</span>
+  }
+  reader.<span class="fn">close</span>();
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · COMPOSIÇÃO -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">9</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Composição</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Definição</h3>
+          <p>Na composição, o objeto "parte" <strong>não pode existir</strong> de forma independente do objeto "todo". A destruição do todo destrói as partes.</p>
+        </div>
+        <div class="card mb">
+          <h3>Onde está — Game ◆── Board</h3>
+          <p><code>Game</code> cria e possui o <code>Board</code> em seu construtor. O tabuleiro não tem significado sem a partida que o controla.</p>
+        </div>
+        <div class="card">
+          <h3>Board ◆── Piece[][]</h3>
+          <p>O <code>Board</code> cria e mantém o array bidimensional de peças. As peças só existem dentro de um tabuleiro.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// Game.java — compõe Board</span>
+<span class="kw">public final class</span> <span class="cls">Game</span> {
+    <span class="kw">private final</span> Board board;
+    <span class="cm">// ↑ Board criado dentro de Game</span>
+
+    <span class="kw">public</span> <span class="fn">Game</span>() {
+        <span class="kw">this</span>.board = <span class="kw">new</span> <span class="cls">Board</span>();
+        <span class="cm">// Board não existe sem Game</span>
+        reset();
+    }
+}
+
+<span class="cm">// Board.java — compõe Piece[][]</span>
+<span class="kw">public final class</span> <span class="cls">Board</span> {
+    <span class="kw">private final</span> Piece[][] squares;
+
+    <span class="kw">public</span> <span class="fn">Board</span>() {
+        <span class="kw">this</span>.squares =
+            <span class="kw">new</span> Piece[8][8];
+        <span class="cm">// array de peças exclusivo deste Board</span>
+    }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · AGREGAÇÃO -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">10</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Agregação</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Definição</h3>
+          <p>Na agregação, o objeto "parte" <strong>pode existir independentemente</strong> do objeto "todo". É um relacionamento mais fraco que a composição.</p>
+        </div>
+        <div class="card mb">
+          <h3>ChessController ◇── Game</h3>
+          <p><code>ChessController</code> recebe uma referência ao <code>Game</code> — não o cria. O <code>Game</code> pode existir sem o controller.</p>
+        </div>
+        <div class="card">
+          <h3>ChessController ◇── ChessFrame</h3>
+          <p><code>ChessFrame</code> também é passado ao controller externamente. Cada objeto tem seu próprio ciclo de vida independente.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// Main.java — cria os objetos separadamente</span>
+Game game = <span class="kw">new</span> <span class="cls">Game</span>();
+ChessController ctrl =
+    <span class="kw">new</span> <span class="cls">ChessController</span>(game);
+
+ChessFrame frame =
+    <span class="kw">new</span> <span class="cls">ChessFrame</span>(ctrl,
+                    whiteName,
+                    blackName);
+
+<span class="cm">// ChessController.java</span>
+<span class="kw">public final class</span> <span class="cls">ChessController</span> {
+    <span class="kw">private final</span> Game game;
+    <span class="cm">// ↑ recebido por parâmetro — agregação</span>
+    <span class="cm">//   Game continua existindo sem Controller</span>
+
+    <span class="kw">public</span> <span class="fn">ChessController</span>(Game game) {
+        <span class="kw">this</span>.game = game;
+    }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · VARS DE CLASSE E INSTÂNCIA -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">11</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Variáveis de Classe e de Instância</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card mb">
+          <h3>Variável de Classe (static)</h3>
+          <p>Compartilhada por <strong>todas</strong> as instâncias da classe. Inicializada uma única vez. Usada nas peças para as <strong>direções de movimento</strong>.</p>
+        </div>
+        <div class="card">
+          <h3>Variável de Instância</h3>
+          <p>Cada objeto tem a sua própria cópia. Representam o <strong>estado individual</strong> de cada objeto — ex.: a aliança e o símbolo de cada peça.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre>
+<span class="cm">// Queen.java</span>
+<span class="kw">public final class</span> <span class="cls">Queen</span>
+        <span class="kw">extends</span> <span class="cls">SlidingPiece</span> {
+
+    <span class="cm">// ── variável de CLASSE (static) ──</span>
+    <span class="kw">private static final int</span>[][] DIRECTIONS = {
+        {-1,0},{1,0},{0,-1},{0,1},
+        {-1,-1},{-1,1},{1,-1},{1,1}
+    };  <span class="cm">// compartilhada por todas as Rainhas</span>
+}
+
+<span class="cm">// Piece.java</span>
+<span class="kw">public abstract class</span> <span class="cls">Piece</span> {
+    <span class="cm">// ── variáveis de INSTÂNCIA ──</span>
+    <span class="kw">private final</span> Alliance alliance;
+    <span class="kw">private final</span> String symbol;
+    <span class="cm">// cada peça tem sua própria aliança</span>
+    <span class="cm">// e símbolo (♕ branca vs ♛ preta)</span>
+}
+
+<span class="cm">// Bishop.java e Rook.java têm o mesmo padrão</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · EXCEÇÕES -->
+  <section class="slide">
+    <div class="concept-header">
+      <div class="concept-num">12</div>
+      <div>
+        <div class="badge">Conceito OOP</div>
+        <h2 style="margin-bottom:0">Exceções</h2>
+      </div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Board.java — estado inválido</h3>
+        <pre>
+<span class="kw">public void</span> <span class="fn">setPiece</span>(Position pos,
+                      Piece piece) {
+  <span class="kw">if</span> (pos == <span class="kw">null</span> || !<span class="fn">isInside</span>(pos))
+    <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(
+        <span class="str">"Position outside board"</span>);
+}
+
+<span class="kw">public</span> Piece <span class="fn">movePiece</span>(Position from,
+                        Position to) {
+  <span class="kw">if</span> (<span class="fn">getPiece</span>(from) == <span class="kw">null</span>)
+    <span class="kw">throw new</span> <span class="cls">IllegalStateException</span>(
+        <span class="str">"No piece at "</span> + from);
+}</pre>
+      </div>
+      <div class="card">
+        <h3>Game.java — regras de en passant / roque</h3>
+        <pre>
+<span class="cm">// en passant inválido</span>
+<span class="kw">throw new</span> <span class="cls">IllegalStateException</span>(
+    <span class="str">"Invalid en passant destination "</span>
+    + to);
+
+<span class="cm">// roque inválido</span>
+<span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(
+    <span class="str">"Invalid castling destination: "</span>
+    + kingTarget);</pre>
+      </div>
+      <div class="card">
+        <h3>GameFileManeger.java — I/O</h3>
+        <pre>
+<span class="cm">// declaradas com throws</span>
+<span class="kw">public void</span> <span class="fn">salvarPartida</span>(...)
+        <span class="kw">throws</span> IOException { ... }
+
+<span class="kw">public</span> List&lt;...&gt; <span class="fn">carregarPartida</span>(...)
+        <span class="kw">throws</span> IOException { ... }
+
+<span class="cm">// tratadas em ChessFrame</span>
+<span class="kw">try</span> {
+  fileManager.<span class="fn">salvarPartida</span>(...);
+} <span class="kw">catch</span> (IOException e) {
+  JOptionPane.<span class="fn">showMessageDialog</span>(...);
+}</pre>
+      </div>
+      <div class="card">
+        <h3>Resumo das exceções usadas</h3>
+        <ul>
+          <li><span class="tag tag-red">IllegalArgumentException</span> posição fora do tabuleiro, roque inválido</li>
+          <li><span class="tag tag-red">IllegalStateException</span> casa vazia no movimento, en passant inválido</li>
+          <li><span class="tag tag-yellow">IOException</span> falha ao ler / escrever arquivo</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · MAPA RESUMO -->
+  <section class="slide">
+    <h2>Mapa de Conceitos OOP no Projeto</h2>
+    <div class="grid grid-3" style="gap:12px;">
+      <div class="card">
+        <h3>🏛 Classe Abstrata</h3>
+        <span class="tag">Piece.java</span><span class="tag">SlidingPiece.java</span>
+        <p style="margin-top:8px; font-size:.88rem;">Base da hierarquia de peças; não pode ser instanciada diretamente.</p>
+      </div>
+      <div class="card">
+        <h3>🧬 Herança</h3>
+        <span class="tag">King, Knight, Pawn</span><span class="tag">Bishop, Rook, Queen</span>
+        <p style="margin-top:8px; font-size:.88rem;">Peças herdam de <code>Piece</code>; Bispo/Torre/Dama herdam de <code>SlidingPiece</code>.</p>
+      </div>
+      <div class="card">
+        <h3>✏️ Sobrescrita</h3>
+        <span class="tag">@Override</span>
+        <p style="margin-top:8px; font-size:.88rem;"><code>getPseudoLegalMoves()</code> e <code>getAttackSquares()</code> em todas as peças.</p>
+      </div>
+      <div class="card">
+        <h3>🔁 Sobrecarga</h3>
+        <span class="tag">Board.java</span>
+        <p style="margin-top:8px; font-size:.88rem;"><code>getPiece(Position)</code> e <code>getPiece(int,int)</code> — mesmo nome, parâmetros diferentes.</p>
+      </div>
+      <div class="card">
+        <h3>📚 Coleções</h3>
+        <span class="tag">ArrayList</span><span class="tag">List</span>
+        <p style="margin-top:8px; font-size:.88rem;">Movimentos legais, histórico de lances, movimentos do arquivo.</p>
+      </div>
+      <div class="card">
+        <h3>🖼 Interface Gráfica</h3>
+        <span class="tag">JFrame</span><span class="tag">JButton</span><span class="tag">JPanel</span>
+        <p style="margin-top:8px; font-size:.88rem;"><code>ChessFrame</code> e <code>ChessBoardPanel</code> constroem toda a UI com Swing.</p>
+      </div>
+      <div class="card">
+        <h3>📁 Arquivo</h3>
+        <span class="tag">FileWriter</span><span class="tag">BufferedReader</span>
+        <p style="margin-top:8px; font-size:.88rem;"><code>GameFileManeger</code> salva/carrega partidas em <code>partida.txt</code>.</p>
+      </div>
+      <div class="card">
+        <h3>⬛ Composição</h3>
+        <span class="tag">Game◆Board</span><span class="tag">Board◆Piece[][]</span>
+        <p style="margin-top:8px; font-size:.88rem;">Partes criadas internamente; não existem sem o todo.</p>
+      </div>
+      <div class="card">
+        <h3>⬡ Agregação</h3>
+        <span class="tag">Controller◇Game</span>
+        <p style="margin-top:8px; font-size:.88rem;"><code>ChessController</code> recebe <code>Game</code> por parâmetro; ciclos de vida independentes.</p>
+      </div>
+      <div class="card">
+        <h3>🔌 Interface Java</h3>
+        <span class="tag">SquareClickListener</span>
+        <p style="margin-top:8px; font-size:.88rem;">Contrato de callback entre tabuleiro gráfico e controlador.</p>
+      </div>
+      <div class="card">
+        <h3>📦 Variáveis</h3>
+        <span class="tag">static DIRECTIONS</span><span class="tag">alliance</span>
+        <p style="margin-top:8px; font-size:.88rem;">Variáveis de classe (direções de movimento) e de instância (aliança/símbolo).</p>
+      </div>
+      <div class="card">
+        <h3>⚠️ Exceções</h3>
+        <span class="tag tag-red">IllegalArg</span><span class="tag tag-red">IllegalState</span><span class="tag tag-yellow">IOException</span>
+        <p style="margin-top:8px; font-size:.88rem;">Lançadas em Board e Game; tratadas em ChessFrame para I/O.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 · FIM -->
+  <section class="slide">
+    <div class="hero">
+      <div class="chess-icon">♚</div>
+      <h1>Obrigado!</h1>
+      <p class="subtitle" style="max-width:520px; text-align:center; margin-top:14px;">
+        Sistema de Xadrez em Java — MVP + OOP com herança, coleções,<br>
+        interface gráfica, manipulação de arquivos e tratamento de exceções.
+      </p>
+      <div style="margin-top:32px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+        <span class="tag">Herança</span>
+        <span class="tag">Sobrescrita</span>
+        <span class="tag">Sobrecarga</span>
+        <span class="tag">Coleções</span>
+        <span class="tag">Interface Gráfica</span>
+        <span class="tag">Arquivo</span>
+        <span class="tag">Composição</span>
+        <span class="tag">Agregação</span>
+        <span class="tag">Classe Abstrata</span>
+        <span class="tag">Vars de Classe</span>
+        <span class="tag">Exceções</span>
+      </div>
+      <p style="margin-top:40px; font-size:.85rem; opacity:.4;">github.com/iury-Ghub/Xadrez</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ── NAVIGATION ── -->
+<div class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Anterior</button>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+    <div class="dots" id="dots"></div>
+    <span class="progress" id="progress">1 / 17</span>
+  </div>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Próximo →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const progressEl = document.getElementById('progress');
+  let current = 0;
+
+  // build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dotsEl.children[current].classList.remove('on');
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    dotsEl.children[current].classList.add('on');
+    progressEl.textContent = (current + 1) + ' / ' + slides.length;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+  }
+
+  function changeSlide(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+  });
+</script>
+</body>
+</html>
